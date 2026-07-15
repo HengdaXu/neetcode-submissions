@@ -1,21 +1,16 @@
 class Solution {
     public int maxArea(int[] heights) {
-        int res = 0;
-        int l = 0, r = heights.length - 1;
-
-        while (l < r){
-            int area = (r - l) * Math.min(heights[l], heights[r]);
-            if (area > res){
-                res = area;
-            }
-            if (heights[l] >= heights[r]){
-                r--;
-            }else{
-                l++;
-            }
+        int i = 0, j = heights.length - 1;
+        int maxAmount = 0;
+        while (i <= j){
+            int currAmount;
+            int leftBar = heights[i], rightBar = heights[j];
+            currAmount = Math.min(leftBar, rightBar) * (j - i);
+            System.out.println(currAmount);
+            maxAmount = Math.max(maxAmount, currAmount);
+            i += (leftBar < rightBar) ? 1 : 0;
+            j -= (leftBar >= rightBar) ? 1 : 0;
         }
-
-        return res;
-        
+        return maxAmount;
     }
 }
