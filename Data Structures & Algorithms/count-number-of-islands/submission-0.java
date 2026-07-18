@@ -1,28 +1,26 @@
 class Solution {
-    int R, C;
+    int[][] dir = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
     public int numIslands(char[][] grid) {
+        int n = grid.length, m = grid[0].length;
         int res = 0;
-        R = grid.length;
-        C = grid[0].length;
-        for (int r=0; r < R; r++){
-            for (int c=0; c < C; c++){
+        Queue<int[]> q = new LinkedList<>();
+        for (int r = 0; r < grid.length; r++){
+            for (int c = 0; c < grid[0].length; c++){
                 if (grid[r][c] == '1'){
                     res++;
-                    dfs(grid, r, c);
+                    q.offer(new int[]{r, c});
+                    while (!q.isEmpty()){
+                        int[] cord = q.poll();
+                        int cr = cord[0], cc = cord[1];
+                        grid[cr][cc] = '0';
+                        for (int[] d: dir){
+                            int sr = cr + d[0], sc = cc + d[1];
+                            if ((0 <= sr && sr < n) && (0 <= sc && sc < m) && grid[sr][sc] == '1') q.offer(new int[]{sr, sc});
+                        }
+                    }
                 }
             }
         }
         return res;
-    }
-    
-    private void dfs(char[][] grid, int r, int c){
-        if (r < 0 || r >= R || c < 0 || c >= C || grid[r][c] == '0') return;
-
-        grid[r][c] = '0';
-        
-        dfs(grid, r-1, c);
-        dfs(grid, r+1, c);
-        dfs(grid, r, c-1);
-        dfs(grid, r, c+1);
     }
 }
