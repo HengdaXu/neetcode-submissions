@@ -1,16 +1,14 @@
 class Solution {
     public boolean wordBreak(String s, List<String> wordDict) {
-        int n = s.length();
-        boolean[] dp = new boolean[n+1];
-        dp[n] = true;
+        boolean[] dp = new boolean[s.length() + 1];
+        dp[s.length()] = true;
 
-        for (int i = n - 1; i >= 0; i--){
-            for (String w: wordDict){
-                if (i + w.length() <= n && s.substring(i, i + w.length()).equals(w)){
-                    dp[i] = dp[i + w.length()];
-                }
+        for (int i = s.length() - 1; i >= 0; i--){
+            for (String word: wordDict){
+                if (i + word.length() <= s.length() && s.substring(i, i + word.length()).equals(word)) dp[i] = dp[i + word.length()]; 
                 if (dp[i]) break;
-           } 
+                
+            }
         }
         return dp[0];
     }
