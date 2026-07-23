@@ -1,71 +1,68 @@
 class LRUCache {
-    private int cap;
-    private HashMap<Integer, Node> cache;
-    private Node left;
-    private Node right;
+    HashMap<Integer, Node> map;
+    Node head;
+    Node tail;
+    int capacity;
 
     public LRUCache(int capacity) {
-        this.cap = capacity;
-        this.cache = new HashMap<>();
-        this.left = new Node(0, 0);
-        this.right = new Node(0, 0);
-        this.left.next = this.right;
-        this.right.prev = this.left;
+        this.map = new HashMap<>();
+        this.head = new Node(-1, -1);
+        this.tail = new Node(-1, -1);
+        head.next = tail;
+        tail.pre = head;
+        this.capacity = capacity;
     }
     
     public int get(int key) {
-        if (cache.containsKey(key)){
-            Node n = cache.get(key);
-            Node tmp = n.prev;
-            tmp.next = n.next;
-            n.next.prev = tmp;
-
-            Node p = right.prev;
-            p.next = n;
-            n.prev = p;
-            n.next = right;
-            right.prev = n;
+        if (map.containsKey(key)){
+            Node n = map.get(key);
+            remove(n);
+            add(n, key);
             return n.val;
         }
         return -1;
-        
+
     }
     
     public void put(int key, int value) {
-        if (cache.containsKey(key)){
-            Node old = cache.get(key);
-            Node tmp = old.prev;
-            tmp.next = old.next;
-            tmp.next.prev = tmp;
+        if (map.containsKey(key)){
+            remove(map.get(key));
         }
-        Node newN = new Node(key, value);
-        cache.put(key, newN);
-        Node p = this.right.prev;
-        p.next = newN;
-        newN.prev = p;
-        newN.next = this.right;
-        this.right.prev = newN;
+        Node node = new Node(key, value);
+        add(node, key);
+        if (map.size() > capacity){
+            remove(head.next);
+        }
+    }
 
-        if (cache.size() > cap){
-            Node n = this.left.next;
-            this.left.next = n.next;
-            n.next.prev = this.left;
-            cache.remove(n.key);
-        }
-        
+    public void remove(Node n){
+        Node pre = n.pre;
+        Node next = n.next;
+        pre.next = next;
+        next.pre = pre;
+        map.remove(n.key);
+    }
+
+    public void add(Node n, int key){
+        Node tmp = tail.pre;
+        tmp.next = n;
+        n.pre = tmp;
+        n.next = tail;
+        tail.pre = n;
+        map.put(key, n);
     }
 }
 
 public class Node{
     int key;
     int val;
-    Node prev;
+    Node pre;
     Node next;
 
     public Node(int key, int val){
         this.key = key;
         this.val = val;
-        this.prev = null;
+        this.pre = null;
         this.next = null;
     }
 }
