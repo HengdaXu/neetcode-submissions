@@ -8,21 +8,24 @@ class Solution {
         for (int r = 0; r < m; r++){
             for (int c = 0; c < n; c++){
                 if (grid[r][c] == '1'){
-                    dfs(grid, r, c);
                     res++;
+                    // doing dfs;
+                    dfs(grid, r, c);
                 }
             }
         }
         return res;
     }
 
-    private void dfs(char[][] grid, int r, int c){
+    public void dfs(char[][] grid, int r, int c){
         if (r < 0 || r >= m || c < 0 || c >= n || grid[r][c] == '0') return;
+
         grid[r][c] = '0';
         for (int[] dir: directions){
             int dr = r + dir[0];
             int dc = c + dir[1];
             dfs(grid, dr, dc);
         }
+        
     }
 }
