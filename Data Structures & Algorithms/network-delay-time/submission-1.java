@@ -1,47 +1,31 @@
 class Solution {
     public int networkDelayTime(int[][] times, int n, int k) {
-        int[] dist = new int[n + 1];
-        Arrays.fill(dist, Integer.MAX_VALUE);
-        dist[k] = 0;
-
-        PriorityQueue<int[]> minHeap = new PriorityQueue<>((a, b) -> (a[0] - b[0]));
-        minHeap.offer(new int[]{dist[k], k});
-
-        List<List<int[]>> adj = new ArrayList<>();
-        for (int i = 0; i <= n; i++){
-            adj.add(new ArrayList<>());
+        int[][] dist = new int[n][n];
+        for (int i = 0; i < n; i++){
+            Arrays.fill(dist[i], Integer.MAX_VALUE);
+            dist[i][i] = 0;
         }
 
-        for (int[] path: times){
-            adj.get(path[0]).add(new int[]{path[2], path[1]});
+        for (int[] net: times){
+            int r = net[0] - 1, c = net[1] - 1, d = net[2];
+            dist[r][c] = d;
         }
-        
-        Set<Integer> visited = new HashSet<>();
-        int t = 0;
-        while (!minHeap.isEmpty()){
-            int[] node = minHeap.poll();
-            int distance = node[0];
-            int start = node[1];
 
-            if (visited.contains(start)) continue;
-            visited.add(start);
-            t = distance;
-
-            if (distance > dist[start]) continue;
-
-            for (int[] path: adj.get(start)){
-                int weight = path[0];
-                int end = path[1];
-                System.out.println(start);
-                System.out.println(end);
-                if (dist[start] + weight < dist[end]){
-                    dist[end] = dist[start] + weight;
-                    minHeap.offer(new int[]{dist[end], end});
+        for (int m = 0; m < n; m++){
+            for (int u = 0; u < n; u++){
+                for (int v = 0; v < n; v++){
+                    if (dist[u][m] != Integer.MAX_VALUE && dist[m][v] != Integer.MAX_VALUE) dist[u][v] = Math.min(dist[u][v], dist[u][m] + dist[m][v]);
                 }
             }
         }
 
-        return visited.size() == n ? t : -1;
-
+        int res = 0, u = k - 1;
+        for (int v = 0; v < n; v++){
+            if (dist[u][v] == Integer.MAX_VALUE){
+                return -1;
+            }
+            res = Math.max(dist[u][v], res);
+        }
+        return res;
     }
 }
