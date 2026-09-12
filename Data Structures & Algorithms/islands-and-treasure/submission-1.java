@@ -1,28 +1,34 @@
 class Solution {
+    int INF = 2147483647;
+    int[][] directions = {{1, 0}, {-1, 0}, {0, 1}, {0, -1}};
+    int m, n;
     public void islandsAndTreasure(int[][] grid) {
-        Queue<int[]> q = new LinkedList<>();
-        int m = grid.length, n = grid[0].length;
-        for (int r = 0; r < m; r ++){
+        Queue<int[]> q = new ArrayDeque<>();
+        m = grid.length;
+        n = grid[0].length;
+        boolean[][] visited = new boolean[m][n];
+        for (int r = 0; r < m; r++){
             for (int c = 0; c < n; c++){
-                if (grid[r][c] == 0) q.offer(new int[]{r, c});
+                if (grid[r][c] == 0){
+                    q.offer(new int[]{r, c});
+                    visited[r][c] = true;
+                } 
             }
         }
-        if (q.size() == 0) return;
 
-        int[][] directions = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
-        while(!q.isEmpty()){
-            int size = q.size();
-            for (int i = 0; i < size; i++){
-                int[] start = q.poll();
-                int r = start[0], c = start[1];
-                for (int[] dir: directions){
-                    int nr = r + dir[0], nc = c + dir[1];
-                    if (nr < 0 || nr >= m || nc < 0 || nc >= n || grid[nr][nc] != Integer.MAX_VALUE) continue;
-                    q.add(new int[]{nr, nc});
-                    grid[nr][nc] = 1 + grid[r][c];
+        while (!q.isEmpty()){
+            int[] loc = q.poll();
+            int r = loc[0], c = loc[1];
+            int d = grid[r][c];
+            for (int[] dir: directions){
+                int dr = r + dir[0], dc = c + dir[1];
+                if (dr < 0 || dr >= m || dc < 0 || dc >= n || grid[dr][dc] == -1 || visited[dr][dc]){
+                    continue;
                 }
+                grid[dr][dc] = Math.min(grid[dr][dc], d + 1);
+                q.offer(new int[]{dr, dc});
+                visited[dr][dc] = true;
             }
         }
-
     }
 }
